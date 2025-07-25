@@ -3,7 +3,8 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
+import { IHeroSectionLinkButtons } from '@/types/home/herSection';
+import { HeroSectionLinkButtons } from '@/constants/home/heroSection';
 const HeroSection: React.FC = () => {
     const router = useRouter();
     return (
@@ -44,15 +45,27 @@ const HeroSection: React.FC = () => {
                 </div>
             </div>
             <div className={'w-[50%] h-[600px] flex items-center justify-center relative'}>
-                <Image src={'/landing.svg'} alt={'landing picture'} width={600} height={600} />
-                <Link
-                    className={
-                        'absolute top-5 right-20 tracking-wider font-bold text-xl underline underline-offset-8 transition duration-200 hover:text-accent1 text-accent2'
-                    }
-                    href={'/auth/login'}
-                >
-                    Login
-                </Link>
+                <Image
+                    priority={true}
+                    src={'/landing.svg'}
+                    alt={'landing picture'}
+                    width={600}
+                    height={600}
+                    style={{ width: '100%', height: 'auto' }}
+                />
+                <div className={'absolute top-5 right-20 flex gap-4'}>
+                    {HeroSectionLinkButtons.map((link: IHeroSectionLinkButtons, index: number) => (
+                        <Link
+                            key={index}
+                            className={
+                                'tracking-wider font-bold text-xl underline transition duration-200 hover:text-accent1 text-accent2'
+                            }
+                            href={link.location}
+                        >
+                            {link.name}
+                        </Link>
+                    ))}
+                </div>
             </div>
         </div>
     );
