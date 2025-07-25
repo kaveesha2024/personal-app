@@ -9,3 +9,9 @@ export interface IWelcomeSectionPropType {
     svg: string;
     alt: string;
 }
+export interface IRegisterInputFieldType extends ILoginInputFieldType {
+    name: string;
+    label: string;
+    type: string;
+    placeholder: string;
+}

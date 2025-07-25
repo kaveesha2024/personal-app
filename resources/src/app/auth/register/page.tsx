@@ -1,18 +1,22 @@
 'use client';
 import React from 'react';
-import { MdEmail, MdLock } from 'react-icons/md';
-import Link from 'next/link';
-import { loginInputFields } from '@/constants/auth/login';
-import { ILoginInputFieldType } from '@/types/auth/auth';
-import { useRouter } from 'next/navigation';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import WelcomeSection from '@/layouts/auth/WelcomeSection';
+import { registerInputFields } from '@/constants/auth/login';
+import { ILoginInputFieldType } from '@/types/auth/auth';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { MdEmail, MdLock } from 'react-icons/md';
+import { FaUser } from 'react-icons/fa';
 
 const Page: React.FC = () => {
-    const route: AppRouterInstance = useRouter();
+    const route = useRouter();
     return (
         <div className={'w-full flex h-screen items-center'}>
-            <WelcomeSection sectionName={'Login'} svg={'/login.svg'} alt={'login picture'} />
+            <WelcomeSection
+                sectionName={'Registration'}
+                svg={'/Register.svg'}
+                alt={'registration picture'}
+            />
             <div className={'w-[50%] h-[700px] flex items-center justify-center'}>
                 <form className={'w-[500px] h-[600px]  flex flex-col justify-center items-center'}>
                     <h1
@@ -20,10 +24,10 @@ const Page: React.FC = () => {
                             'text-2xl font-bold text-accent1 tracking-wider mb-10 select-none'
                         }
                     >
-                        User Login
+                        Create Your Account
                     </h1>
                     <div className={'flex flex-col gap-4'}>
-                        {loginInputFields.map((field: ILoginInputFieldType, index: number) => (
+                        {registerInputFields.map((field: ILoginInputFieldType, index: number) => (
                             <div className={'flex flex-col w-[300px]'} key={index}>
                                 <label
                                     className={'font-semibold tracking-wide'}
@@ -38,6 +42,10 @@ const Page: React.FC = () => {
                                 >
                                     {field.name === 'email' ? (
                                         <MdEmail className={'text-xl'} />
+                                    ) : field.name === 'firstName' ? (
+                                        <FaUser className={'text-xl'} />
+                                    ) : field.name === 'lastName' ? (
+                                        <FaUser className={'text-xl'} />
                                     ) : (
                                         <MdLock className={'text-xl'} />
                                     )}
@@ -45,8 +53,8 @@ const Page: React.FC = () => {
                                         className={'w-[250px] p-2 outline-none'}
                                         type={field.type}
                                         name={field.name}
-                                        placeholder={field.placeholder}
                                         id={field.name}
+                                        placeholder={field.placeholder}
                                     />
                                 </div>
                             </div>
@@ -67,18 +75,18 @@ const Page: React.FC = () => {
                             }
                             type={'submit'}
                         >
-                            Sign In
+                            Register
                         </button>
                     </div>
                     <div>
                         <button
-                            onClick={() => route.push('/auth/register')}
+                            onClick={() => route.push('/auth/login')}
                             className={
-                                'py-2 px-4 rounded-lg text-accent1 shadow-2xl my-3 cursor-pointer transition duration-200 hover:outline outline-accent1'
+                                'py-2 px-4 rounded-lg text-accent1 my-3 cursor-pointer transition duration-200 hover:outline-2 outline-accent1'
                             }
                             type={'button'}
                         >
-                            Register
+                            Login
                         </button>
                     </div>
                 </form>
