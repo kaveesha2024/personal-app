@@ -1,5 +1,5 @@
 import React from 'react';
-import HeroSection from '@/layouts/HeroSection';
+import HeroSection from '@/layouts/home/HeroSection';
 
 const Page = () => {
     return (
