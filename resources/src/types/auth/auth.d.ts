@@ -15,3 +15,10 @@ export interface IRegisterInputFieldType extends ILoginInputFieldType {
     type: string;
     placeholder: string;
 }
+export interface IRegisterDetailsType {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+}

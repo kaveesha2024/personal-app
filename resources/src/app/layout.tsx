@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, Sansation, Roboto } from 'next/font/google';
+import { Geist_Mono, Roboto } from 'next/font/google';
 import './globals.css';
+import { Toaster } from 'react-hot-toast';
+import React from 'react';
 
 const roboto = Roboto({
     subsets: ['latin'],
@@ -24,6 +26,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${roboto.className} ${geistMono.variable} antialiased`}>
+                <Toaster position="top-right" reverseOrder={false} />
                 {children}
             </body>
         </html>

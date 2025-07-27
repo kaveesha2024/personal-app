@@ -1,15 +1,50 @@
 'use client';
-import React from 'react';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
 import WelcomeSection from '@/layouts/auth/WelcomeSection';
 import { registerInputFields } from '@/constants/auth/login';
-import { ILoginInputFieldType } from '@/types/auth/auth';
+import { ILoginInputFieldType, IRegisterDetailsType } from '@/types/auth/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { MdEmail, MdLock } from 'react-icons/md';
 import { FaUser } from 'react-icons/fa';
+import toast from 'react-hot-toast';
+import registerApi from '@/apiCalls/auth/registerApi';
 
 const Page: React.FC = () => {
     const route = useRouter();
+    const [registerDetails, setRegisterDetails] = useState<IRegisterDetailsType>({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    });
+    const handleRegisterInputField = (event: ChangeEvent<HTMLInputElement>): void => {
+        const { name, value } = event.target;
+        setRegisterDetails({
+            ...registerDetails,
+            [name]: value,
+        });
+    };
+    const register = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+        event.preventDefault();
+        const { firstName, lastName, email, password, confirmPassword } = registerDetails;
+        if (!firstName || !lastName || !email || !password || !confirmPassword) {
+            toast.error('Please fill all the fields');
+            return;
+        }
+        if (password !== confirmPassword) {
+            toast.error('Passwords do not match');
+            return;
+        }
+        try {
+            const response = await registerApi(registerDetails);
+            console.log(response);
+        } catch (e) {
+            console.log(e);
+            toast.error('Connection Timeout');
+        }
+    };
     return (
         <div className={'w-full flex h-screen items-center'}>
             <WelcomeSection
@@ -18,7 +53,10 @@ const Page: React.FC = () => {
                 alt={'registration picture'}
             />
             <div className={'w-[50%] h-[700px] flex items-center justify-center'}>
-                <form className={'w-[500px] h-[600px]  flex flex-col justify-center items-center'}>
+                <form
+                    onSubmit={register}
+                    className={'w-[500px] h-[600px]  flex flex-col justify-center items-center'}
+                >
                     <h1
                         className={
                             'text-2xl font-bold text-accent1 tracking-wider mb-10 select-none'
@@ -55,6 +93,8 @@ const Page: React.FC = () => {
                                         name={field.name}
                                         id={field.name}
                                         placeholder={field.placeholder}
+                                        onChange={handleRegisterInputField}
+                                        required={true}
                                     />
                                 </div>
                             </div>
