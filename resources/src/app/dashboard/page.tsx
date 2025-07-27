@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 const Page: React.FC = () => {
     useEffect((): void => {
         const token: string | undefined = Cookies.get('token');
-        if (token === undefined) return redirect('/auth/login');
+        if (token === undefined) return redirect('/');
     }, []);
     return <div>Dashboard</div>;
 };

@@ -1,15 +1,16 @@
 'use client';
-import React, { ChangeEvent, FormEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { MdEmail, MdLock } from 'react-icons/md';
 import Link from 'next/link';
 import { loginInputFields } from '@/constants/auth/login';
 import { ILoginDetailsType, ILoginInputFieldType } from '@/types/auth/auth';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import WelcomeSection from '@/layouts/auth/WelcomeSection';
 import toast from 'react-hot-toast';
 import loginApi from '@/apiCalls/auth/loginApi';
 import sweet from 'sweetalert2';
+import Cookies from 'js-cookie';
 
 const Page: React.FC = () => {
     const route: AppRouterInstance = useRouter();
@@ -17,6 +18,10 @@ const Page: React.FC = () => {
         email: '',
         password: '',
     });
+    useEffect(() => {
+        const token: string | undefined = Cookies.get('token');
+        if (token) return redirect('/dashboard');
+    }, []);
     const handleRegisterInputField = (event: ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = event.target;
         setLoginDetails((prevState: ILoginDetailsType) => ({
@@ -25,6 +30,7 @@ const Page: React.FC = () => {
         }));
     };
     const login = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+        event.preventDefault();
         const { email, password } = loginDetails;
         if (!email || !password) {
             toast.error('Please fill all the fields');
@@ -33,7 +39,40 @@ const Page: React.FC = () => {
         sweet.showLoading();
         try {
             const response = await loginApi(loginDetails);
-            console.log(response.data);
+            if (response.data.status) {
+                Cookies.set('token', response.data.access_token, { expires: 1 });
+                route.push('/dashboard');
+                return;
+            }
+            const err = response.data.errors;
+            for (const key in err) {
+                toast.custom(t => (
+                    <div
+                        className={`${
+                            t.visible ? 'animate-enter' : 'animate-leave'
+                        } max-w-md w-full backdrop-blur-xs shadow-lg rounded-lg pointer-events-auto flex bg-blue-500/10`}
+                    >
+                        <div className="flex-1 w-0 p-4">
+                            <div className="flex items-start">
+                                <div className="ml-3 flex-1">
+                                    <p className="text-lg font-medium text-gray-900 uppercase">
+                                        {key}
+                                    </p>
+                                    <p className="mt-1 text-lg text-gray-500">{err[key][0]}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex border-l border-gray-200">
+                            <button
+                                onClick={(): void => toast.dismiss(t.id)}
+                                className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                ));
+            }
         } catch (e) {
             console.log(e);
             toast.error('Connection Timeout');

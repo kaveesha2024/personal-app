@@ -62,10 +62,10 @@ const Page: React.FC = () => {
                             <div className="flex-1 w-0 p-4">
                                 <div className="flex items-start">
                                     <div className="ml-3 flex-1">
-                                        {/*<p className="text-lg font-medium text-gray-900">{key}</p>*/}
-                                        <p className="mt-1 text-lg tracking-wider font-semibold">
-                                            {err[key][0]}
+                                        <p className="text-lg font-medium text-gray-900 uppercase">
+                                            {key}
                                         </p>
+                                        <p className="mt-1 text-lg text-gray-500">{err[key][0]}</p>
                                     </div>
                                 </div>
                             </div>
