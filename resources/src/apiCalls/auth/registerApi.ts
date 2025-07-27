@@ -4,6 +4,6 @@ import axiosInstance from '@/utility/axiosInstance';
 
 const registerApi = async (payload: IRegisterDetailsType) => {
     await axiosInstance.get('/sanctum/csrf-cookie');
-    return await axiosInstance.post('/register', payload);
+    return await axiosInstance.post('/api/register', payload);
 };
 export default registerApi;

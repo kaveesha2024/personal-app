@@ -42,11 +42,11 @@ final class RegisterUserTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'status',
-            'message',
+            'errors',
         ]);
         $response->assertSimilarJson([
             'status' => false,
-            'message' => [
+            'errors' => [
                 'firstName' => ["The first name field must be at least 3 characters."],
                 'lastName' => ["The last name field must be a string."],
                 'email' => ["The email field must be a valid email address."],
@@ -67,11 +67,11 @@ final class RegisterUserTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'status',
-            'message',
+            'errors',
         ]);
         $response->assertSimilarJson([
             'status' => false,
-            'message' => [
+            'errors' => [
                 'email' => ["The email has already been taken."],
             ]
         ]);

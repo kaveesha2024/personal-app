@@ -36,7 +36,7 @@ class RegisterRequest extends FormRequest
     {
         $response = response()->json([
             'status' => false,
-            'message' => $validator->errors(),
+            'errors' => $validator->errors(),
         ]);
         throw new HttpResponseException($response);
     }

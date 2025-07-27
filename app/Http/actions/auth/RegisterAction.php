@@ -32,7 +32,7 @@ class RegisterAction
                 Log::error($e->getMessage());
                 return [
                     "status" => false,
-                    "message" => "Internal server error",
+                    "errors" => "Internal server error",
                 ];
             }
         }

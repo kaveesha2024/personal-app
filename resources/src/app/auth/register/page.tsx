@@ -1,14 +1,16 @@
 'use client';
-import React, { ChangeEvent, FormEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import WelcomeSection from '@/layouts/auth/WelcomeSection';
 import { registerInputFields } from '@/constants/auth/login';
 import { ILoginInputFieldType, IRegisterDetailsType } from '@/types/auth/auth';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { MdEmail, MdLock } from 'react-icons/md';
 import { FaUser } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import registerApi from '@/apiCalls/auth/registerApi';
+import Cookies from 'js-cookie';
+import sweet from 'sweetalert2';
 
 const Page: React.FC = () => {
     const route = useRouter();
@@ -19,6 +21,10 @@ const Page: React.FC = () => {
         password: '',
         confirmPassword: '',
     });
+    useEffect(() => {
+        const token = Cookies.get('token');
+        if (token) return redirect('/dashboard');
+    }, []);
     const handleRegisterInputField = (event: ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = event.target;
         setRegisterDetails({
@@ -38,11 +44,49 @@ const Page: React.FC = () => {
             return;
         }
         try {
+            sweet.showLoading();
             const response = await registerApi(registerDetails);
-            console.log(response);
+            if (response.data.status) {
+                Cookies.set('token', response.data.access_token);
+                route.push('/dashboard');
+            }
+            if (response.data.errors) {
+                const err = response.data.errors;
+                for (const key in err) {
+                    toast.custom(t => (
+                        <div
+                            className={`${
+                                t.visible ? 'animate-enter' : 'animate-leave'
+                            } max-w-md w-full backdrop-blur-xs shadow-lg rounded-lg pointer-events-auto flex bg-blue-500/10`}
+                        >
+                            <div className="flex-1 w-0 p-4">
+                                <div className="flex items-start">
+                                    <div className="ml-3 flex-1">
+                                        {/*<p className="text-lg font-medium text-gray-900">{key}</p>*/}
+                                        <p className="mt-1 text-lg tracking-wider font-semibold">
+                                            {err[key][0]}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex border-l border-gray-200">
+                                <button
+                                    onClick={(): void => toast.dismiss(t.id)}
+                                    className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    ));
+                }
+                return;
+            }
         } catch (e) {
             console.log(e);
             toast.error('Connection Timeout');
+        } finally {
+            sweet.close();
         }
     };
     return (
