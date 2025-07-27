@@ -47,7 +47,7 @@ const Page: React.FC = () => {
             sweet.showLoading();
             const response = await registerApi(registerDetails);
             if (response.data.status) {
-                Cookies.set('token', response.data.access_token);
+                Cookies.set('token', response.data.access_token, { expires: 1 });
                 route.push('/dashboard');
             }
             if (response.data.errors) {

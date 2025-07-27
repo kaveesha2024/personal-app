@@ -22,3 +22,7 @@ export interface IRegisterDetailsType {
     password: string;
     confirmPassword: string;
 }
+export interface ILoginDetailsType {
+    email: string;
+    password: string;
+}

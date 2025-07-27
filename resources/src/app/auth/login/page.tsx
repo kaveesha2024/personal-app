@@ -1,20 +1,54 @@
 'use client';
-import React from 'react';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { MdEmail, MdLock } from 'react-icons/md';
 import Link from 'next/link';
 import { loginInputFields } from '@/constants/auth/login';
-import { ILoginInputFieldType } from '@/types/auth/auth';
+import { ILoginDetailsType, ILoginInputFieldType } from '@/types/auth/auth';
 import { useRouter } from 'next/navigation';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import WelcomeSection from '@/layouts/auth/WelcomeSection';
+import toast from 'react-hot-toast';
+import loginApi from '@/apiCalls/auth/loginApi';
+import sweet from 'sweetalert2';
 
 const Page: React.FC = () => {
     const route: AppRouterInstance = useRouter();
+    const [loginDetails, setLoginDetails] = useState<ILoginDetailsType>({
+        email: '',
+        password: '',
+    });
+    const handleRegisterInputField = (event: ChangeEvent<HTMLInputElement>): void => {
+        const { name, value } = event.target;
+        setLoginDetails((prevState: ILoginDetailsType) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+    const login = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+        const { email, password } = loginDetails;
+        if (!email || !password) {
+            toast.error('Please fill all the fields');
+            return;
+        }
+        sweet.showLoading();
+        try {
+            const response = await loginApi(loginDetails);
+            console.log(response.data);
+        } catch (e) {
+            console.log(e);
+            toast.error('Connection Timeout');
+        } finally {
+            sweet.close();
+        }
+    };
     return (
         <div className={'w-full flex h-screen items-center'}>
             <WelcomeSection sectionName={'Login'} svg={'/login.svg'} alt={'login picture'} />
             <div className={'w-[50%] h-[700px] flex items-center justify-center'}>
-                <form className={'w-[500px] h-[600px]  flex flex-col justify-center items-center'}>
+                <form
+                    onSubmit={login}
+                    className={'w-[500px] h-[600px] flex flex-col justify-center items-center'}
+                >
                     <h1
                         className={
                             'text-2xl font-bold text-accent1 tracking-wider mb-10 select-none'
@@ -47,6 +81,8 @@ const Page: React.FC = () => {
                                         name={field.name}
                                         placeholder={field.placeholder}
                                         id={field.name}
+                                        required={true}
+                                        onChange={handleRegisterInputField}
                                     />
                                 </div>
                             </div>
