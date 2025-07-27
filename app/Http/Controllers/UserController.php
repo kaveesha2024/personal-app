@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\actions\auth\RegisterAction;
+use App\Http\Requests\RegisterRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function register(Request $request, RegisterAction $RegisterAction): JsonResponse
+    public function register(RegisterRequest $request, RegisterAction $RegisterAction): JsonResponse
     {
-        return response()->json($RegisterAction($request));
+        $validated = $request->validated();
+        return response()->json($RegisterAction($validated));
     }
 
     public function login(Request $request)
