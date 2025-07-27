@@ -13,14 +13,6 @@ class LoginAction
         [$email, $password] = [$request['email'], $request['password']];
         try {
             $user = User::where('email', $email)->first();
-            if (!$user){
-                return [
-                    'status' => false,
-                    'errors' => [
-                        'email' => ['Invalid Email Address'],
-                    ],
-                ];
-            }
             if ($user->is_blocked){
                 return [
                     'status' => false,
