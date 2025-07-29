@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardSideNavBar from '@/layouts/dashboard/DashboardSideNavBar';
 import Image from 'next/image';
 import { AiFillEdit } from 'react-icons/ai';
@@ -7,6 +7,7 @@ import { MdDelete } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import CoursesNavigationBar from '@/layouts/dashboard/courses/CoursesNavigationBar';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import CreateNewCourseSection from '@/layouts/dashboard/courses/createNewCourse/CreateNewCourseSection';
 
 interface ICourseType {
     name: string;
@@ -29,11 +30,21 @@ const courses: ICourseType[] = [
     },
 ];
 const Page: React.FC = () => {
+    const [isCreateNewCourseFormOpen, setIsCreateNewCourseFormOpen] = useState<boolean>(false);
     const route: AppRouterInstance = useRouter();
     return (
         <div className={'w-full h-screen bg-gray-50 flex'}>
+            {isCreateNewCourseFormOpen && (
+                <CreateNewCourseSection
+                    setIsCreateNewCourseFormOpen={setIsCreateNewCourseFormOpen}
+                />
+            )}
             <DashboardSideNavBar />
-            <section className={'h-full w-[80%] max-h-full overflow-y-auto p-5'}>
+            <section
+                className={
+                    'h-full w-[80%] max-h-full overflow-y-auto p-5 scrollbar scrollbar-thumb-accent1'
+                }
+            >
                 {/*Hero section*/}
                 <div className={'w-full mb-10'}>
                     <CoursesNavigationBar />
@@ -49,7 +60,7 @@ const Page: React.FC = () => {
                                 voluptatibus! Animi, quis.{' '}
                             </span>
                             <button
-                                // href={'/dashboard/create_new_course'}
+                                onClick={() => setIsCreateNewCourseFormOpen(true)}
                                 className={'cursor-pointer hover:underline text-accent1'}
                             >
                                 Create Course ?
