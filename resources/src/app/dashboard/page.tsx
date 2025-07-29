@@ -1,14 +1,18 @@
 'use client';
 import React, { useEffect } from 'react';
-import { redirect } from 'next/navigation';
 import Cookies from 'js-cookie';
-
+import { redirect } from 'next/navigation';
+import DashboardSideNavBar from '@/layouts/dashboard/DashboardSideNavBar';
 const Page: React.FC = () => {
-    useEffect((): void => {
+    useEffect((): undefined => {
         const token: string | undefined = Cookies.get('token');
-        if (token === undefined) return redirect('/');
+        if (!token) return redirect('/auth/login');
     }, []);
-    return <div>Dashboard</div>;
+    return (
+        <div className={'w-full h-screen bg-gray-50'}>
+            <DashboardSideNavBar />
+        </div>
+    );
 };
 
 export default Page;
