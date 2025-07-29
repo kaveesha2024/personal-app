@@ -68,7 +68,7 @@ const Page: React.FC = () => {
                         </p>
                         <Image
                             priority={true}
-                            src={'/courses_hero_section.svg'}
+                            src={'/courses_hero_section.png'}
                             alt={'landing picture'}
                             width={300}
                             height={300}
