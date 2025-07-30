@@ -27,7 +27,7 @@ class LoginAction
                     ],
                 ];
             }
-            $accessToken = $user->createToken('auth_token', ['create-courses'])->plainTextToken;
+            $accessToken = $user->createToken('auth_token', ['server-admin'])->plainTextToken;
             return [
                 'status' => true,
                 'access_token' => $accessToken,
