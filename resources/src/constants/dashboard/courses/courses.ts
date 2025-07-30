@@ -22,4 +22,5 @@ export const createCourseFormInputs: ICreateNewCourseFormInputsType[] = [
 ];
 export interface ICreateNewCourseSectionPropType {
     setIsCreateNewCourseFormOpen: (value: boolean) => void;
+    setIsLoading: (value: boolean) => void;
 }

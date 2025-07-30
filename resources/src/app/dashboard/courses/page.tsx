@@ -4,33 +4,27 @@ import DashboardSideNavBar from '@/layouts/dashboard/DashboardSideNavBar';
 import Image from 'next/image';
 import { AiFillEdit } from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import CoursesNavigationBar from '@/layouts/dashboard/courses/CoursesNavigationBar';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import CreateNewCourseSection from '@/layouts/dashboard/courses/createNewCourse/CreateNewCourseSection';
 import GetAllCoursesApi from '@/apiCalls/dashboard/courses/getAllCoursesApi';
-import sweet from 'sweetalert2';
 import toast from 'react-hot-toast';
+import Loading from '@/layouts/components/loader/Loading';
+import { ICourseType } from '@/types/courses/courses';
+import Cookies from 'js-cookie';
 
-interface ICourseType {
-    name: string;
-    description: string;
-    logo: string;
-    courseId: string;
-}
 const Page: React.FC = () => {
     const [isCreateNewCourseFormOpen, setIsCreateNewCourseFormOpen] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [courses, setCourses] = useState([]);
     const route: AppRouterInstance = useRouter();
     useEffect((): void => {
-        if (isLoading) {
-            getAllCourses();
-            setIsLoading(false);
-        }
+        const token: string | undefined = Cookies.get('token');
+        if (!token) return redirect('/auth/login');
+        getAllCourses();
     }, [isLoading]);
     const getAllCourses = async (): Promise<void> => {
-        sweet.showLoading();
         try {
             const response = await GetAllCoursesApi();
             if (response.data.status) {
@@ -41,15 +35,15 @@ const Page: React.FC = () => {
             toast.error('Connection Timeout');
             console.log(e);
         } finally {
-            sweet.close();
+            setIsLoading(false);
         }
     };
-    console.log(courses);
     return (
         <div className={'w-full h-screen bg-gray-50 flex'}>
             {isCreateNewCourseFormOpen && (
                 <CreateNewCourseSection
                     setIsCreateNewCourseFormOpen={setIsCreateNewCourseFormOpen}
+                    setIsLoading={setIsLoading}
                 />
             )}
             <DashboardSideNavBar />
@@ -90,54 +84,71 @@ const Page: React.FC = () => {
                 </div>
                 {/*courses*/}
                 <div className={'w-full flex flex-col gap-5'}>
-                    {courses.map((course: ICourseType, index: number) => (
-                        <div
-                            key={index}
-                            className={`bg-white shadow rounded-lg p-4 flex justify-between items-center hover:shadow-lg transition duration-200  ${index === courses.length - 1 ? 'mb-40' : ''}`}
-                        >
-                            <div
-                                className={'flex gap-5 items-center cursor-pointer'}
-                                onClick={(): void =>
-                                    route.push('/dashboard/courses/' + course.courseId)
-                                }
-                            >
-                                <Image
-                                    priority={true}
-                                    src={course.logo}
-                                    alt={course.name}
-                                    width={100}
-                                    height={100}
-                                />
-                                <div>
-                                    <h1 className={'text-accent1 font-semibold text-2xl'}>
-                                        {course.name}
-                                    </h1>
-                                    <p className={'text-black/70'}>{course.description}</p>
+                    {!isLoading ? (
+                        courses.length > 0 ? (
+                            courses.map((course: ICourseType, index: number) => (
+                                <div
+                                    key={index}
+                                    className={`bg-white shadow rounded-lg p-4 flex justify-between items-center hover:shadow-lg transition duration-200  ${index === courses.length - 1 ? 'mb-40' : ''}`}
+                                >
+                                    <div
+                                        className={'flex gap-5 items-center cursor-pointer'}
+                                        onClick={(): void =>
+                                            route.push('/dashboard/courses/' + course.id)
+                                        }
+                                    >
+                                        <Image
+                                            priority={true}
+                                            src={course.logo}
+                                            alt={course.course_name}
+                                            width={100}
+                                            height={100}
+                                        />
+                                        <div>
+                                            <h1 className={'text-accent1 font-semibold text-2xl'}>
+                                                {course.course_name}
+                                            </h1>
+                                            <p className={'text-black/70'}>{course.description}</p>
+                                        </div>
+                                    </div>
+                                    <div
+                                        className={
+                                            'h-full flex gap-10 items-center justify-between text-xl '
+                                        }
+                                    >
+                                        <div
+                                            className={
+                                                'w-[250px] h-full text-sm text-center text-black/50'
+                                            }
+                                        >
+                                            Created At:{' '}
+                                            {new Date(course.created_at).toLocaleString()}
+                                        </div>
+                                        <div className={'flex gap-3'}>
+                                            <button
+                                                className={
+                                                    'text-accent1 cursor-pointer hover:text-accent2 hover:scale-125 transition duration-200'
+                                                }
+                                            >
+                                                <AiFillEdit />
+                                            </button>
+                                            <button
+                                                className={
+                                                    'text-red-500 cursor-pointer hover:text-accent2 hover:scale-125 transition duration-200'
+                                                }
+                                            >
+                                                <MdDelete />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div
-                                className={
-                                    'h-full flex gap-3 items-center justify-center w-[100px] text-xl'
-                                }
-                            >
-                                <button
-                                    className={
-                                        'text-accent1 cursor-pointer hover:text-accent2 hover:scale-125 transition duration-200'
-                                    }
-                                >
-                                    <AiFillEdit />
-                                </button>
-                                <button
-                                    className={
-                                        'text-red-500 cursor-pointer hover:text-accent2 hover:scale-125 transition duration-200'
-                                    }
-                                >
-                                    <MdDelete />
-                                </button>
-                                <button></button>
-                            </div>
-                        </div>
-                    ))}
+                            ))
+                        ) : (
+                            <div>No Courses yet !!</div>
+                        )
+                    ) : (
+                        <Loading />
+                    )}
                 </div>
             </section>
         </div>

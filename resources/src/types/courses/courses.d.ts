@@ -9,3 +9,10 @@ export interface ICreateNewCourseFormInputsType {
     type: string;
     placeholder: string;
 }
+export interface ICourseType {
+    course_name: string;
+    description: string;
+    logo: string;
+    id: string;
+    created_at: string;
+}

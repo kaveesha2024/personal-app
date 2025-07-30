@@ -3,14 +3,13 @@ import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { IoClose } from 'react-icons/io5';
 import { FaBookmark } from 'react-icons/fa';
 import { MdDescription } from 'react-icons/md';
-import SubmitButton from '@/layouts/button/submitButton';
+import SubmitButton from '@/layouts/components/button/submitButton';
 import {
     ICreateNewCourseFormInputsType,
     ICreateNewCourseFormInputType,
 } from '@/types/courses/courses';
 import CreateNewCourseApi from '@/apiCalls/dashboard/courses/createNewCourseApi';
 import toast from 'react-hot-toast';
-import sweet from 'sweetalert2';
 import {
     createCourseFormInputs,
     ICreateNewCourseSectionPropType,
@@ -18,6 +17,7 @@ import {
 
 const CreateNewCourseSection: React.FC<ICreateNewCourseSectionPropType> = ({
     setIsCreateNewCourseFormOpen,
+    setIsLoading,
 }) => {
     const [createNewCourseInputDetails, setCreateNewCourseInputDetails] =
         useState<ICreateNewCourseFormInputType>({
@@ -25,6 +25,7 @@ const CreateNewCourseSection: React.FC<ICreateNewCourseSectionPropType> = ({
             description: '',
             course_image: null,
         });
+    const [loading, setLoading] = useState<boolean>(false);
     const handleCreateNewCourseInputDetails = (event: ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = event.target;
         setCreateNewCourseInputDetails({
@@ -46,21 +47,19 @@ const CreateNewCourseSection: React.FC<ICreateNewCourseSectionPropType> = ({
             toast.error('Please fill all the fields');
             return;
         }
-        sweet.showLoading();
+        setLoading(true);
         const formData = new FormData();
         formData.append('logo', createNewCourseInputDetails.course_image[0]);
         formData.append('course_name', createNewCourseInputDetails.course_name);
         formData.append('description', createNewCourseInputDetails.description);
-        // const response = await axiosInstance.post('/api/course/create_new', formData);
-
         try {
             const response = await CreateNewCourseApi(formData);
             if (response.data.status) {
                 toast.success('Course Created Successfully');
                 setIsCreateNewCourseFormOpen(false);
+                setIsLoading(true);
                 return;
             }
-
             const err = response.data.errors;
             for (const key in err) {
                 toast.custom(t => (
@@ -94,7 +93,7 @@ const CreateNewCourseSection: React.FC<ICreateNewCourseSectionPropType> = ({
             console.log(e);
             toast.error('Connection Timeout');
         } finally {
-            sweet.close();
+            setLoading(false);
         }
     };
     return (
@@ -170,7 +169,11 @@ const CreateNewCourseSection: React.FC<ICreateNewCourseSectionPropType> = ({
                                 </div>
                             ),
                         )}
-                        <SubmitButton type={'submit'} buttonName={'Create Course'} />
+                        <SubmitButton
+                            type={'submit'}
+                            buttonName={'Create Course'}
+                            loading={loading}
+                        />
                     </form>
                 </section>
             </div>

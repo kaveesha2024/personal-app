@@ -11,6 +11,7 @@ class GetAllCoursesAction
     {
         try {
             $courses = DB::table('courses')->select([
+                'id',
                 'course_name',
                 'description',
                 'logo',
