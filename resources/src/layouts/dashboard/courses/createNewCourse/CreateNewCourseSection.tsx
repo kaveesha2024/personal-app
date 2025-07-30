@@ -15,7 +15,6 @@ import {
     createCourseFormInputs,
     ICreateNewCourseSectionPropType,
 } from '@/constants/dashboard/courses/courses';
-import axiosInstance from '@/utility/axiosInstance';
 
 const CreateNewCourseSection: React.FC<ICreateNewCourseSectionPropType> = ({
     setIsCreateNewCourseFormOpen,
@@ -52,17 +51,51 @@ const CreateNewCourseSection: React.FC<ICreateNewCourseSectionPropType> = ({
         formData.append('logo', createNewCourseInputDetails.course_image[0]);
         formData.append('course_name', createNewCourseInputDetails.course_name);
         formData.append('description', createNewCourseInputDetails.description);
-        const response = await axiosInstance.post('/api/course/create_new', formData);
-        console.log(response);
-        // try {
-        //     // const response = await CreateNewCourseApi(formData);
-        //     console.log(response.data);
-        // } catch (e) {
-        //     toast.error('Connection Timeout');
-        //     console.log(e);
-        // } finally {
-        //     sweet.close();
-        // }
+        // const response = await axiosInstance.post('/api/course/create_new', formData);
+
+        try {
+            const response = await CreateNewCourseApi(formData);
+            if (response.data.status) {
+                toast.success('Course Created Successfully');
+                setIsCreateNewCourseFormOpen(false);
+                return;
+            }
+
+            const err = response.data.errors;
+            for (const key in err) {
+                toast.custom(t => (
+                    <div
+                        className={`${
+                            t.visible ? 'animate-enter' : 'animate-leave'
+                        } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex`}
+                    >
+                        <div className="flex-1 w-0 p-4">
+                            <div className="flex items-start">
+                                <div className="ml-3 flex-1">
+                                    <p className="text-sm font-medium text-gray-900">
+                                        {key === 'course_name' ? 'Course Name' : 'Description'}
+                                    </p>
+                                    <p className="mt-1 text-sm text-gray-500">{err[key][0]}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex border-l border-gray-200">
+                            <button
+                                onClick={() => toast.dismiss(t.id)}
+                                className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                ));
+            }
+        } catch (e) {
+            console.log(e);
+            toast.error('Connection Timeout');
+        } finally {
+            sweet.close();
+        }
     };
     return (
         <div
