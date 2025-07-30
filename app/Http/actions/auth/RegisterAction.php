@@ -21,7 +21,7 @@ class RegisterAction
                 ]);
                 $user = User::where('email', $request['email'])->first();
 
-                $token = $user->createToken('auth_token', ['server:user'])->plainTextToken;
+                $token = $user->createToken('auth_token', ['create-courses'])->plainTextToken;
 
                 return [
                     "status" => true,

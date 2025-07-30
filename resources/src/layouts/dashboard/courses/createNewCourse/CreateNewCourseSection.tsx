@@ -1,42 +1,69 @@
 'use client';
-import React from 'react';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { IoClose } from 'react-icons/io5';
 import { FaBookmark } from 'react-icons/fa';
 import { MdDescription } from 'react-icons/md';
 import SubmitButton from '@/layouts/button/submitButton';
+import {
+    ICreateNewCourseFormInputsType,
+    ICreateNewCourseFormInputType,
+} from '@/types/courses/courses';
+import CreateNewCourseApi from '@/apiCalls/dashboard/courses/createNewCourseApi';
+import toast from 'react-hot-toast';
+import sweet from 'sweetalert2';
+import {
+    createCourseFormInputs,
+    ICreateNewCourseSectionPropType,
+} from '@/constants/dashboard/courses/courses';
+import axiosInstance from '@/utility/axiosInstance';
 
-interface ICreateNewCourseSectionPropType {
-    setIsCreateNewCourseFormOpen: (value: boolean) => void;
-}
-interface ICreateNewCourseFormInputsType {
-    name: string;
-    label: string;
-    type: string;
-    placeholder: string;
-}
-const createCourseFormInputs: ICreateNewCourseFormInputsType[] = [
-    {
-        name: 'course_name',
-        label: 'Course Name',
-        type: 'text',
-        placeholder: 'Enter course name',
-    },
-    {
-        name: 'description',
-        label: 'Course Description',
-        type: 'text',
-        placeholder: 'Enter course description',
-    },
-    {
-        name: 'course_image',
-        label: 'Course Image',
-        type: 'file',
-        placeholder: 'Enter course image',
-    },
-];
 const CreateNewCourseSection: React.FC<ICreateNewCourseSectionPropType> = ({
     setIsCreateNewCourseFormOpen,
 }) => {
+    const [createNewCourseInputDetails, setCreateNewCourseInputDetails] =
+        useState<ICreateNewCourseFormInputType>({
+            course_name: '',
+            description: '',
+            course_image: null,
+        });
+    const handleCreateNewCourseInputDetails = (event: ChangeEvent<HTMLInputElement>): void => {
+        const { name, value } = event.target;
+        setCreateNewCourseInputDetails({
+            ...createNewCourseInputDetails,
+            [name]: value,
+        });
+    };
+    const handleCreateNewCourseInputDetailsImage = (event: ChangeEvent<HTMLInputElement>): void => {
+        setCreateNewCourseInputDetails({
+            ...createNewCourseInputDetails,
+            course_image: event.target.files,
+        });
+    };
+    const handleCreateNewCourseSubmit = async (
+        event: FormEvent<HTMLFormElement>,
+    ): Promise<void> => {
+        event.preventDefault();
+        if (!createNewCourseInputDetails.course_image || !createNewCourseInputDetails.course_name) {
+            toast.error('Please fill all the fields');
+            return;
+        }
+        sweet.showLoading();
+        const formData = new FormData();
+        formData.append('logo', createNewCourseInputDetails.course_image[0]);
+        formData.append('course_name', createNewCourseInputDetails.course_name);
+        formData.append('description', createNewCourseInputDetails.description);
+        const response = await axiosInstance.post('/api/course/create_new', formData);
+        console.log(response);
+        // try {
+        //     // const response = await CreateNewCourseApi(formData);
+        //     console.log(response.data);
+        // } catch (e) {
+        //     toast.error('Connection Timeout');
+        //     console.log(e);
+        // } finally {
+        //     sweet.close();
+        // }
+    };
     return (
         <div
             onClick={(): void => setIsCreateNewCourseFormOpen(false)}
@@ -68,7 +95,10 @@ const CreateNewCourseSection: React.FC<ICreateNewCourseSectionPropType> = ({
                             veniam. Ab eaque inventore magni nisi ut vel velit veritatis? Laborum.
                         </p>
                     </div>
-                    <form className={'flex flex-col gap-4 w-full '}>
+                    <form
+                        onSubmit={handleCreateNewCourseSubmit}
+                        className={'flex flex-col gap-4 w-full '}
+                    >
                         {createCourseFormInputs.map(
                             (field: ICreateNewCourseFormInputsType, index: number) => (
                                 <div className={'flex flex-col w-[300px]'} key={index}>
@@ -97,7 +127,11 @@ const CreateNewCourseSection: React.FC<ICreateNewCourseSectionPropType> = ({
                                             placeholder={field.placeholder}
                                             id={field.name}
                                             required={true}
-                                            // onChange={handleRegisterInputField}
+                                            onChange={
+                                                field.name === 'course_image'
+                                                    ? handleCreateNewCourseInputDetailsImage
+                                                    : handleCreateNewCourseInputDetails
+                                            }
                                         />
                                     </div>
                                 </div>

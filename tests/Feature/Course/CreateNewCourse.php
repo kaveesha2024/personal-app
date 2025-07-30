@@ -5,6 +5,7 @@ namespace Tests\Feature\Course;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -18,9 +19,12 @@ final class CreateNewCourse extends TestCase
         $course = Course::factory()->create();
         Sanctum::actingAs($user, ['create-courses']);
 
-        $course = $this->post('/api/course/create_new', []);
+        $response = $this->postJson('/api/course/create_new', [
+            'course_name' => $course['course_name'],
+            'description' => $course['description'],
+        ]);
 
-        $course->assertStatus(200);
-
+        $response->assertStatus(200);
+        dd($response->json());
     }
 }
