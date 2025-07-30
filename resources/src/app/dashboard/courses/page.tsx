@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DashboardSideNavBar from '@/layouts/dashboard/DashboardSideNavBar';
 import Image from 'next/image';
 import { AiFillEdit } from 'react-icons/ai';
@@ -8,30 +8,43 @@ import { useRouter } from 'next/navigation';
 import CoursesNavigationBar from '@/layouts/dashboard/courses/CoursesNavigationBar';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import CreateNewCourseSection from '@/layouts/dashboard/courses/createNewCourse/CreateNewCourseSection';
+import GetAllCoursesApi from '@/apiCalls/dashboard/courses/getAllCoursesApi';
+import sweet from 'sweetalert2';
+import toast from 'react-hot-toast';
 
 interface ICourseType {
     name: string;
     description: string;
-    image: string;
-    link: string;
+    logo: string;
+    courseId: string;
 }
-const courses: ICourseType[] = [
-    {
-        name: 'React',
-        description: 'React is a JavaScript library for building user interfaces.',
-        image: '/react.svg',
-        link: 'react',
-    },
-    {
-        name: 'Laravel',
-        description: 'Laravel is a PHP Framework for building user interfaces and backend APIs.',
-        image: '/next.svg',
-        link: 'laravel',
-    },
-];
 const Page: React.FC = () => {
     const [isCreateNewCourseFormOpen, setIsCreateNewCourseFormOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [courses, setCourses] = useState([]);
     const route: AppRouterInstance = useRouter();
+    useEffect((): void => {
+        if (isLoading) {
+            getAllCourses();
+            setIsLoading(false);
+        }
+    }, [isLoading]);
+    const getAllCourses = async (): Promise<void> => {
+        sweet.showLoading();
+        try {
+            const response = await GetAllCoursesApi();
+            if (response.data.status) {
+                setCourses(response.data.message);
+                return;
+            }
+        } catch (e) {
+            toast.error('Connection Timeout');
+            console.log(e);
+        } finally {
+            sweet.close();
+        }
+    };
+    console.log(courses);
     return (
         <div className={'w-full h-screen bg-gray-50 flex'}>
             {isCreateNewCourseFormOpen && (
@@ -84,11 +97,13 @@ const Page: React.FC = () => {
                         >
                             <div
                                 className={'flex gap-5 items-center cursor-pointer'}
-                                onClick={() => route.push('/dashboard/courses/' + course.link)}
+                                onClick={(): void =>
+                                    route.push('/dashboard/courses/' + course.courseId)
+                                }
                             >
                                 <Image
                                     priority={true}
-                                    src={course.image}
+                                    src={course.logo}
                                     alt={course.name}
                                     width={100}
                                     height={100}
