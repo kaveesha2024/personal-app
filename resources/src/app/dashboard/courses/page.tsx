@@ -93,7 +93,7 @@ const Page: React.FC = () => {
                                     <div
                                         className={'flex gap-5 items-center cursor-pointer'}
                                         onClick={(): void =>
-                                            route.push('/dashboard/courses/' + course.id)
+                                            route.push('/dashboard/courses/' + course.course_name)
                                         }
                                     >
                                         <Image
