@@ -59,3 +59,16 @@ export default function FileUploadWithProgress() {
         </div>
     );
 }
+
+
+
+
+
+
+lesson -> [
+    lesson name,
+    lesson content,
+    watch count,
+    video,
+    isWatched,
+]
