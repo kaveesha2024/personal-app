@@ -4,7 +4,7 @@ import DashboardSideNavBar from '@/layouts/dashboard/DashboardSideNavBar';
 import Image from 'next/image';
 import { AiFillEdit } from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import CoursesNavigationBar from '@/layouts/dashboard/courses/CoursesNavigationBar';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import CreateNewCourseSection from '@/layouts/dashboard/courses/createNewCourse/CreateNewCourseSection';
@@ -12,7 +12,7 @@ import GetAllCoursesApi from '@/apiCalls/dashboard/courses/getAllCoursesApi';
 import toast from 'react-hot-toast';
 import Loading from '@/layouts/components/loader/Loading';
 import { ICourseType } from '@/types/courses/courses';
-import Cookies from 'js-cookie';
+import { useCheckUser } from '@/hooks/useCheckUser';
 
 const Page: React.FC = () => {
     const [isCreateNewCourseFormOpen, setIsCreateNewCourseFormOpen] = useState<boolean>(false);
@@ -20,10 +20,9 @@ const Page: React.FC = () => {
     const [courses, setCourses] = useState([]);
     const route: AppRouterInstance = useRouter();
     useEffect((): void => {
-        const token: string | undefined = Cookies.get('token');
-        if (!token) return redirect('/auth/login');
         getAllCourses();
     }, [isLoading]);
+    useCheckUser();
     const getAllCourses = async (): Promise<void> => {
         try {
             const response = await GetAllCoursesApi();

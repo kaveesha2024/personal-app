@@ -2,6 +2,9 @@
 
 namespace App\Http\actions\auth;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 class GetUserAction
 {
     public function __invoke(): array
@@ -15,9 +18,27 @@ class GetUserAction
                 ]
             ];
         }
+        $validUser = DB::table('users')->where('id', $user['id'])->select([
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'is_blocked',
+            'created_at',
+            'updated_at',
+        ])->first();
+
+        if (!$validUser) {
+            return [
+                'status' => false,
+                'errors' => [
+                    "Unauthorized" => ['Please login first.']
+                ]
+            ];
+        }
         return [
             'status' => true,
-            'message' => $user,
+            'message' => $validUser,
         ];
     }
 }

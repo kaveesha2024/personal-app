@@ -16,7 +16,9 @@ class LoginAction
             if ($user->is_blocked){
                 return [
                     'status' => false,
-                    'errors' => "User is blocked",
+                    'errors' => [
+                        'Email' => ['User is blocked'],
+                    ],
                 ];
             }
             if (!$this->isPasswordCorrect($password, $user->password)){

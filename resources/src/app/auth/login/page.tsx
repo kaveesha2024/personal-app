@@ -18,10 +18,10 @@ const Page: React.FC = () => {
         email: '',
         password: '',
     });
-    useEffect(() => {
-        const token: string | undefined = Cookies.get('token');
-        if (token) return redirect('/dashboard');
-    }, []);
+    // useEffect(() => {
+    //     const token: string | undefined = Cookies.get('token');
+    //     if (token) return redirect('/dashboard');
+    // }, []);
     const handleRegisterInputField = (event: ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = event.target;
         setLoginDetails((prevState: ILoginDetailsType) => ({

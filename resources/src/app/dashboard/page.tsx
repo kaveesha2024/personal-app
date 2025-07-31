@@ -1,13 +1,9 @@
 'use client';
-import React, { useEffect } from 'react';
-import Cookies from 'js-cookie';
-import { redirect } from 'next/navigation';
+import React from 'react';
 import DashboardSideNavBar from '@/layouts/dashboard/DashboardSideNavBar';
+import { useCheckUser } from '@/hooks/useCheckUser';
 const Page: React.FC = () => {
-    useEffect((): undefined => {
-        const token: string | undefined = Cookies.get('token');
-        if (!token) return redirect('/auth/login');
-    }, []);
+    useCheckUser();
     return (
         <div className={'w-full h-screen bg-gray-50'}>
             <DashboardSideNavBar />
