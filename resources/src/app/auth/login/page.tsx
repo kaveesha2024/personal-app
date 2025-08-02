@@ -21,13 +21,13 @@ const Page: React.FC = () => {
     // useEffect(() => {
     //     const token: string | undefined = Cookies.get('token');
     //     if (token) return redirect('/dashboard');
-    // }, []);
+    // }, []); 
     const handleRegisterInputField = (event: ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = event.target;
         setLoginDetails((prevState: ILoginDetailsType) => ({
             ...prevState,
             [name]: value,
-        }));
+        })); 
     };
     const login = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
         event.preventDefault();

@@ -10,5 +10,6 @@ Route::middleware(['auth:sanctum', CheckAbilities::class . ":server-admin"])->gr
     Route::post("/course/create_new", [CourseController::class, "createNewCourse"]);
     Route::get("/courses", [CourseController::class, "getAllCourses"]);
     Route::post("/lesson/create_new", [LessonController::class, "createNewLesson"]);
+    Route::post("/courses/lessons/video_upload", [LessonController::class, "uploadVideo"]);
 });
 

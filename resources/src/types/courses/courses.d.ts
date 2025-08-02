@@ -16,3 +16,16 @@ export interface ICourseType {
     id: string;
     created_at: string;
 }
+export interface ICreateNewLessonSectionPropType {
+    setIsCreateLessonFormOpen: (value: boolean) => void;
+}
+export interface ICreateNewLessonFormInputsType {
+    name: string;
+    label: string;
+    type: string;
+    placeholder: string;
+}
+export interface ICreateNewLessonInputDetails {
+    content: string;
+    lesson_name: string;
+}

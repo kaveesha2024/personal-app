@@ -14,6 +14,7 @@ import {
     createCourseFormInputs,
     ICreateNewCourseSectionPropType,
 } from '@/constants/dashboard/courses/courses';
+import FormHeroSection from '@/layouts/components/formHeroSection/FormHeroSection';
 
 const CreateNewCourseSection: React.FC<ICreateNewCourseSectionPropType> = ({
     setIsCreateNewCourseFormOpen,
@@ -117,16 +118,12 @@ const CreateNewCourseSection: React.FC<ICreateNewCourseSectionPropType> = ({
                 </button>
 
                 <section className={'flex flex-col gap-10'}>
-                    <div className={'flex flex-col gap-3'}>
-                        <h1 className={'text-center text-2xl text-accent1 font-bold'}>
-                            Create New Course
-                        </h1>
-                        <p className={'text-center text-black/70'}>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur
-                            consequatur eveniet iure magnam maxime nam neque perferendis quidem vel
-                            veniam. Ab eaque inventore magni nisi ut vel velit veritatis? Laborum.
-                        </p>
-                    </div>
+                    <FormHeroSection
+                        title={'Create New Course'}
+                        description={
+                            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab dolorum odit quo reiciendis rem. Ad, alias amet, assumenda dignissimos exercitationem illum minus odit quod, reiciendis rem sed sint soluta tempora?'
+                        }
+                    />
                     <form
                         onSubmit={handleCreateNewCourseSubmit}
                         className={'flex flex-col gap-4 w-full '}
